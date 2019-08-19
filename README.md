@@ -2,6 +2,9 @@
 
 Unofficial [Kokatto](https://www.kokatto.com) Go Client
 
+[![go report card](https://goreportcard.com/badge/github.com/sampingantech/kokatto "go report card")](https://goreportcard.com/report/github.com/sampingantech/kokatto)
+[![GoDoc](https://godoc.org/github.com/sampingantech/kokatto?status.svg)](https://godoc.org/github.com/sampingantech/kokatto)
+
 ## Example
 
 Setup client

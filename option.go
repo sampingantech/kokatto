@@ -17,7 +17,7 @@ func evaluateOptions(opts []Option) *options {
 	return optCopy
 }
 
-// Option for sauth middleware
+// Option for OTP
 type Option func(*options)
 
 // WithOTP will set OTP code to send.
