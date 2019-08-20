@@ -29,7 +29,7 @@ type Params struct {
 }
 
 // NewClient will return a new kokatto client instance.
-func NewClient(p Params) (*Kokatto, error) {
+func NewClient(p Params) (*Client, error) {
 	c := &http.Client{
 		Timeout: 15 * time.Second,
 	}
@@ -50,45 +50,45 @@ func NewClient(p Params) (*Kokatto, error) {
 		return nil, err
 	}
 
-	return &Kokatto{client: c, params: p, secretKey: []byte(p.PrivateKey), tz: tz}, nil
+	return &Client{client: c, params: p, secretKey: []byte(p.PrivateKey), tz: tz}, nil
 }
 
-// Kokatto client
-type Kokatto struct {
+// Client for kokatto
+type Client struct {
 	client    *http.Client
 	params    Params
 	secretKey []byte
 	tz        *time.Location
 }
 
-func (k *Kokatto) requestOTP() *OTPRequest {
+func (c *Client) requestOTP() *OTPRequest {
 	return &OTPRequest{
-		ClientID:  k.params.ClientID,
-		AppType:   k.params.AppType,
-		MediaType: k.params.MediaType,
-		Timestamp: time.Now().In(k.tz).Format(timeFormat),
+		ClientID:  c.params.ClientID,
+		AppType:   c.params.AppType,
+		MediaType: c.params.MediaType,
+		Timestamp: time.Now().In(c.tz).Format(timeFormat),
 	}
 }
 
-func (k *Kokatto) requestDeliveryStatus() *DeliveryStatusRequest {
+func (c *Client) requestDeliveryStatus() *DeliveryStatusRequest {
 	return &DeliveryStatusRequest{
-		ClientID:  k.params.ClientID,
-		AppType:   k.params.AppType,
-		Timestamp: time.Now().In(k.tz).Format(timeFormat),
+		ClientID:  c.params.ClientID,
+		AppType:   c.params.AppType,
+		Timestamp: time.Now().In(c.tz).Format(timeFormat),
 	}
 }
 
 // SendOTP will call kokatto request OTP
-func (k *Kokatto) SendOTP(phoneNumber string, opts ...Option) (rsp OTPResponse, err error) {
+func (c *Client) SendOTP(phoneNumber string, opts ...Option) (rsp OTPResponse, err error) {
 	o := evaluateOptions(opts)
-	req := k.requestOTP()
+	req := c.requestOTP()
 
 	req.PhoneNumber = phoneNumber
 	if o.otpCode != "" {
 		req.OTPMCode = o.otpCode
 	}
 
-	err = Sign(req, k.secretKey)
+	err = Sign(req, c.secretKey)
 	if err != nil {
 		return rsp, err
 	}
@@ -97,7 +97,7 @@ func (k *Kokatto) SendOTP(phoneNumber string, opts ...Option) (rsp OTPResponse, 
 		return rsp, err
 	}
 
-	result, err := k.client.Post(createURL+"?"+query, "application/json", nil)
+	result, err := c.client.Post(createURL+"?"+query, "application/json", nil)
 	if err != nil {
 		return rsp, errors.Wrap(err, "SendOTP failed")
 	}
@@ -119,11 +119,11 @@ func (k *Kokatto) SendOTP(phoneNumber string, opts ...Option) (rsp OTPResponse, 
 }
 
 // DeliveryStatus will get delivery status of OTP based on reqID.
-func (k *Kokatto) DeliveryStatus(reqID string) (rsp DeliveryStatusResponse, err error) {
-	req := k.requestDeliveryStatus()
+func (c *Client) DeliveryStatus(reqID string) (rsp DeliveryStatusResponse, err error) {
+	req := c.requestDeliveryStatus()
 	req.RequestID = reqID
 
-	err = Sign(req, k.secretKey)
+	err = Sign(req, c.secretKey)
 	if err != nil {
 		return rsp, err
 	}
@@ -132,7 +132,7 @@ func (k *Kokatto) DeliveryStatus(reqID string) (rsp DeliveryStatusResponse, err 
 		return rsp, err
 	}
 	fmt.Println("[*] ", deliveryStatusURL+"?"+query)
-	result, err := k.client.Get(deliveryStatusURL + "?" + query)
+	result, err := c.client.Get(deliveryStatusURL + "?" + query)
 	if err != nil {
 		return rsp, errors.Wrap(err, "DeliveryStatus failed")
 	}
