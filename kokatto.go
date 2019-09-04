@@ -2,7 +2,6 @@ package kokatto
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -131,7 +130,6 @@ func (c *Client) DeliveryStatus(reqID string) (rsp DeliveryStatusResponse, err e
 	if err != nil {
 		return rsp, err
 	}
-	fmt.Println("[*] ", deliveryStatusURL+"?"+query)
 	result, err := c.client.Get(deliveryStatusURL + "?" + query)
 	if err != nil {
 		return rsp, errors.Wrap(err, "DeliveryStatus failed")
@@ -145,8 +143,6 @@ func (c *Client) DeliveryStatus(reqID string) (rsp DeliveryStatusResponse, err e
 		var errRsp Error
 		err = json.Unmarshal(rspBody, &errRsp)
 		if err != nil {
-			fmt.Println("[*] error disini")
-			fmt.Println(string(rspBody))
 			return rsp, err
 		}
 		return rsp, &errRsp
