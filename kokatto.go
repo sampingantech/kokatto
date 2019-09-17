@@ -10,9 +10,8 @@ import (
 )
 
 const (
-	// TODO(sakti): change scheme to https if supported
-	createURL         = "http://otpm.kokatto.com/otpm/create"
-	deliveryStatusURL = "http://otpm.kokatto.com/otpm/status"
+	createURL         = "https://otpm.kokatto.com/otpm/create"
+	deliveryStatusURL = "https://otpm-report.kokatto.com/otpm/status"
 	defAppType        = "OPM"
 	defMediaType      = "VOI"
 	tzLocation        = "Asia/Jakarta"
