@@ -10,15 +10,20 @@ type OTPResponse struct {
 	ErrorMessage string `json:"errorMessage"`
 }
 
-// DeliveryStatusResponse attribute
-type DeliveryStatusResponse struct {
-	Status               string `json:"status"`
-	StatusCode           string `json:"statusCode"`
+// DeliveryData attribute
+type DeliveryData struct {
 	RequestID            string `json:"requestId"`
 	DestinationAddress   string `json:"destinationAddress"`
 	OTPCode              string `json:"otpCode"`
 	OTPStatus            string `json:"otpStatus"`
 	OTPStatusDescription string `json:"otpStatusDescription"`
-	Message              string `json:"message"`
-	ErrorMessage         string `json:"errorMessage"`
+}
+
+// DeliveryStatusResponse attribute
+type DeliveryStatusResponse struct {
+	Status       string       `json:"status"`
+	StatusCode   string       `json:"statusCode"`
+	Message      string       `json:"message"`
+	ErrorMessage string       `json:"errorMessage"`
+	Data         DeliveryData `json:"data"`
 }
